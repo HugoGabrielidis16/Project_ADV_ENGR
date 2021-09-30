@@ -4,19 +4,21 @@ import regex as re
 import nltk
 import re
 import html
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from spacy.lang.en.stop_words import STOP_WORDS as stopwords
 from sklearn.metrics.pairwise import cosine_similarity
+
+
+from function import *
+from setUp import *
 
 #nltk.download('wordnet')
 
 # Retrieve database
 
-dataframe_reviews = pd.read_csv("Database/reviews.csv",sep =";")
-dataframe_overrall = pd.read_csv("Database/overall.csv",sep =";")
-dataframe_sentences = pd.read_csv("Database/sentences.csv",sep =";")
-dataframe_golden_set_HLT=pd.read_csv("Database/golden_set_HLT.csv",sep =";")
+
+
+
 
 
 def clean(text):
@@ -50,22 +52,8 @@ def clean(text):
 #print(lemmatizer.lemmatize("Better".lower()))
 
 
-tfidf = TfidfVectorizer(decode_error='replace', encoding='utf-8')
-
-for i in range(len(dataframe_overrall['review'].values)):
-        dataframe_overrall['review'].values[i] = dataframe_overrall['review'].values[i].lower()
 
 
 
-dt = tfidf.fit_transform(dataframe_overrall["review"].values.astype('U'))
-text = "crash"
-made_up = tfidf.transform([text])
-
-sim = cosine_similarity(made_up, dt)
-print()
-print('The review that have the better cosine similarity with the words "'+text+ '" are : ')
-
-ordered_list = dataframe_overrall.iloc[np.argsort(sim[0])[::-1][1:6]][["review"]]
-
-print(ordered_list["review"].values)
+affichage_top_R(dataframe_overrall,bug_keywords,20)
  
