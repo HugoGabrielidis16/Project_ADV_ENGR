@@ -7,3 +7,9 @@ Bug
 Rating
 Feature
 UserExperience
+
+
+Supervised algorithn to implement :
+
+1 - KNN 
+2 - XGBoost 

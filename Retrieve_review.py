@@ -55,5 +55,5 @@ def clean(text):
 
 
 
-affichage_top_R(dataframe_overrall,bug_keywords,20)
+affichage_top_R(dataframe_overrall,bug_keywords,20,"review")
  

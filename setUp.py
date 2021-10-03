@@ -23,23 +23,25 @@ featurerequests_keywods = ["add", "please", "could", "would", "hope", "improve",
 
 
 
-def cosine_similarity_dataframe_keywords(data_frame,keywords):
+def cosine_similarity_dataframe_keywords(data_frame,keywords,label_name):
     tfidf = TfidfVectorizer(decode_error='replace', encoding='utf-8')
 
-    for i in range(len(data_frame['review'].values)):
-            data_frame['review'].values[i] = data_frame['review'].values[i].lower()
+    for i in range(len(data_frame[label_name].values)):
+            data_frame[label_name].values[i] = data_frame[label_name].values[i].lower()
     
-    dt = tfidf.fit_transform(data_frame["review"].values.astype('U'))
+    dt = tfidf.fit_transform(data_frame[label_name].values.astype('U'))
     made_up = tfidf.transform(keywords)
 
     sim = cosine_similarity(made_up, dt)
     return sim
 
 
-def affichage_top_R(dataframe,kewyords,R):
-    sim = cosine_similarity_dataframe_keywords(dataframe,kewyords)
+def affichage_top_R(dataframe,kewyords,R,label_name):
+    sim = cosine_similarity_dataframe_keywords(dataframe,kewyords,label_name)
 
-    ordered_list = dataframe.iloc[np.argsort(sim[0])[::-1][0:R]][["review"]]
+    ordered_list = dataframe.iloc[np.argsort(sim[0])[::-1][0:R]][[label_name]]
 
     for i in range(R):
-        print(str(i+1) + " : " + str(ordered_list["review"].values[i]))
+        print(str(i+1) + " : " + str(ordered_list[label_name].values[i]))
+
+
