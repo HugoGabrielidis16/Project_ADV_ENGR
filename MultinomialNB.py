@@ -1,8 +1,3 @@
-# IR15A.py CS5154/6054 cheng 2021
-# Apply MultinomialNB on tweets
-# May be compared to LinearSVC
-# Usage: python IR15A.py
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -11,7 +6,6 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import plot_confusion_matrix
-from sklearn.svm import LinearSVC
 import json
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -58,7 +52,7 @@ model1.fit(X_train_tf, Y_train)
 
 X_test_tf = countv.transform(X_test)
 Y_pred_NB = model1.predict(X_test_tf)
-print ('Accuracy Score MultinomialNB  mind_df = 1, ngram_range=(1,1) : - ', accuracy_score(Y_test, Y_pred_NB))
+print ('Accuracy Score MultinomialNB  mind_df = 1, ngram_range=(1,1) : - ', accuracy_score(Y_test, Y_pred_NB)*100)
 
 
 plot_confusion_matrix(model1,X_test_tf,
@@ -76,7 +70,8 @@ Y_l = model1.predict(X_l)
 
 
 for i in range(len(X_testing)):
-    print(X_testing.iloc[i])
-    print(Y_l[i])
+    if Y_l[i] =="Bug":
+        print(X_testing.iloc[i])
+        print(Y_l[i])
 
 

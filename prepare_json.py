@@ -27,12 +27,12 @@ DataFrame_json = pd.DataFrame(Review_label)
 DataFrame_json.columns = ["review","label"]
 
 tfidf_word = TfidfVectorizer(stop_words=stopwords, min_df=1000)
-print(DataFrame_json["review"])
+#print(DataFrame_json["review"])
 dt_word = tfidf_word.fit_transform(DataFrame_json["review"])
-print(dt_word)
+#print(dt_word)
 #DataFrame_json_review_Matrix = np.transpose(cosine_similarity_dataframe_keywords(DataFrame_json,bug_keywords+featurerequests_keywods,"review"))
 
-print(dt_word.T)
+#print(dt_word.T)
 DataFrame_json_review_Matrix = cosine_similarity(dt_word, dt_word)
 
 #affichage(DataFrame_json_review_Matrix.shape)
@@ -53,8 +53,8 @@ for i in range(len(DataFrame_json_label_Matrix)):
     """ else:
         DataFrame_json_label_Matrix[i] = 0 """
     
-""" DataFrame_json_label_Matrix_test = DataFrame_json_label_Matrix[0:3670]
+DataFrame_json_label_Matrix_test = DataFrame_json_label_Matrix[0:3670]
 DataFrame_json_review_Matrix_test = DataFrame_json_review_Matrix[0:3670]
- """
+
 
 

@@ -1,7 +1,3 @@
-# IR15A.py CS5154/6054 cheng 2021
-# Apply MultinomialNB on tweets
-# May be compared to LinearSVC
-# Usage: python IR15A.py
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -49,7 +45,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
 print('Size of Training Data ', X_train.shape[0])
 print('Size of Test Data ', X_test.shape[0])
 
-countv = CountVectorizer(min_df = 2, ngram_range=(1,1), stop_words="english")
+countv = CountVectorizer(min_df = 3, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
 model1 = LinearSVC()
