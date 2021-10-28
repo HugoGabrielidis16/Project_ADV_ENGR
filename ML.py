@@ -19,4 +19,5 @@ X_train, X_test, y_train, y_test = train_test_split(DataFrame_json_review_Matrix
 clf_gxb = XGBClassifier(objective = "binary:logistic",missing = None, seed = seed)
 clf_gxb.fit(X_train,y_train,verbose=True,early_stopping_rounds=10,eval_metric="aucpr",
 eval_set=[(X_test,y_test)])
-	
+
+print(clf_gxb)

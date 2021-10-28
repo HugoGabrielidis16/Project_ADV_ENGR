@@ -13,3 +13,14 @@ Supervised algorithn to implement :
 
 1 - KNN 
 2 - XGBoost 
+
+
+
+See again the tfid method might be an error in
+
+
+KNN seems that K around 500 is the best
+
+
+
+Too much 0 in the matrix.
