@@ -14,6 +14,7 @@ from sklearn.metrics import plot_confusion_matrix
 from sklearn.svm import LinearSVC
 import json
 
+from sklearn.feature_extraction.text import TfidfVectorizer
 with open("json/all.json", "r") as read_file:
     data = json.load(read_file)
 
@@ -59,11 +60,23 @@ X_test_tf = countv.transform(X_test)
 Y_pred_NB = model1.predict(X_test_tf)
 print ('Accuracy Score MultinomialNB  mind_df = 1, ngram_range=(1,1) : - ', accuracy_score(Y_test, Y_pred_NB))
 
-#print(confusion_matrix(Y_test, Y_pred))
 
 plot_confusion_matrix(model1,X_test_tf,
                       Y_test, values_format='d',
                       cmap=plt.cm.Blues)
 plt.title("Confusion matrix for MultinomialNB, mind_df = 1, ngram_range=(1,1)")
 plt.show()
+
+df_t = pd.read_csv("Database/reviews.csv",sep =";")
+X_testing = df["review"]
+
+X_l =  countv.transform(X_testing)
+
+Y_l = model1.predict(X_l)
+
+
+for i in range(len(X_testing)):
+    print(X_testing.iloc[i])
+    print(Y_l[i])
+
 
