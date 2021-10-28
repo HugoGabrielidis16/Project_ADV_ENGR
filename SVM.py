@@ -7,11 +7,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from sklearn import svm
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import plot_confusion_matrix
-from sklearn.svm import LinearSVC
+
+
 import json
 
 with open("json/all.json", "r") as read_file:
@@ -52,7 +53,7 @@ print('Size of Test Data ', X_test.shape[0])
 countv = CountVectorizer(min_df = 2, ngram_range=(1,1), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
-model1 = LinearSVC()
+model1 = svm.SVC()
 model1.fit(X_train_tf, Y_train)
 
 X_test_tf = countv.transform(X_test)
@@ -66,4 +67,5 @@ plot_confusion_matrix(model1,X_test_tf,
                       cmap=plt.cm.Blues)
 plt.title("Confusion matrix for MultinomialNB, mind_df = 5, ngram_range=(1,1)")
 plt.show()
+
 
