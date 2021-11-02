@@ -11,5 +11,6 @@ Milestone 2 :
   - Use whole vocabulary and implement following classification methods :
     - Add of NB Multinomial Methods
     - Add of LinearSVC Methods
+    - Add of DecisionTree model
 
   - Starting to implement Neural Network using tensorflow
