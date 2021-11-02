@@ -7,5 +7,9 @@ Milestone 1 :
   - Starting to implement supervised learning method xGboost using a python library
 
 Milestone 2 :
-  - Add of NB Multinomial Methods
-  - Add of LinearSVC Methods
+  - Knn using only bugword doesnt seems to work great 
+  - Use whole vocabulary and implement following classification methods :
+    - Add of NB Multinomial Methods
+    - Add of LinearSVC Methods
+
+  - Starting to implement Neural Network using tensorflow

@@ -1,14 +1,21 @@
+from numpy import loadtxt
+from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import plot_confusion_matrix
+from sklearn.svm import LinearSVC
 import json
 
-from sklearn.feature_extraction.text import TfidfVectorizer
 with open("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/json/all.json", "r") as read_file:
     data = json.load(read_file)
 
@@ -44,34 +51,19 @@ X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
 print('Size of Training Data ', X_train.shape[0])
 print('Size of Test Data ', X_test.shape[0])
 
-countv = CountVectorizer(min_df = 5, ngram_range=(1,5), stop_words="english")
-X_train_tf = countv.fit_transform(X_train)
+#countv = CountVectorizer(min_df = 3, ngram_range=(1,5), stop_words="english")
+countv = TfidfVectorizer(min_df = 3, ngram_range=(1,5), stop_words="english")
+X_train_tf = countv.fit_transform(X_train).toarray()
 
-model1 = MultinomialNB()
-model1.fit(X_train_tf, Y_train)
+
+model = XGBClassifier()
+model.fit(X_train_tf, Y_train)
+
+
 
 X_test_tf = countv.transform(X_test)
-Y_pred_NB = model1.predict(X_test_tf)
-print ('Accuracy Score MultinomialNB  mind_df = 1, ngram_range=(1,1) : - ', accuracy_score(Y_test, Y_pred_NB)*100)
+
+Y_pred = model.predict(X_test_tf)
 
 
-plot_confusion_matrix(model1,X_test_tf,
-                      Y_test, values_format='d',
-                      cmap=plt.cm.Blues)
-plt.title("Confusion matrix for MultinomialNB, mind_df = 1, ngram_range=(1,1)")
-plt.show()
-
-df_t = pd.read_csv("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/Database/reviews.csv",sep =";")
-X_testing = df["review"]
-
-X_l =  countv.transform(X_testing)
-
-Y_l = model1.predict(X_l)
-
-
-for i in range(len(X_testing)):
-    if Y_l[i] =="Bug":
-        print(X_testing.iloc[i])
-        print(Y_l[i])
-
-
+print(accuracy_score(Y_pred,Y_test))
