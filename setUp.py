@@ -17,6 +17,7 @@ dataframe_golden_set_HLT=pd.read_csv("Database/golden_set_HLT.csv",sep =";")
 
 
 bug_keywords = ["bug", "fix", "problem", "issue", "defect", "crash","error","issue","problem"]
+
 featurerequests_keywods = ["add", "please", "could", "would", "hope", "improve", "miss", "need","prefer",
 "request", "should", "suggest", "want", "wish"]
 

@@ -13,6 +13,9 @@ with open("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/json/all.json
     data = json.load(read_file)
 
 
+import nltk
+from nltk.corpus import stopwords
+
 
 Review_label = []
 
@@ -44,7 +47,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
 print('Size of Training Data ', X_train.shape[0])
 print('Size of Test Data ', X_test.shape[0])
 
-countv = CountVectorizer(min_df = 5, ngram_range=(1,5), stop_words="english")
+countv = CountVectorizer(min_df = 10, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
 model1 = MultinomialNB()
@@ -69,9 +72,31 @@ X_l =  countv.transform(X_testing)
 Y_l = model1.predict(X_l)
 
 
-for i in range(len(X_testing)):
-    if Y_l[i] =="Bug":
-        print(X_testing.iloc[i])
-        print(Y_l[i])
+Bug = []
 
+for i in range(len(X_test)):
+    if Y_l[i] =="Bug":
+        Bug.append(X_testing.iloc[i])
+
+
+bug_keyword = {}
+stops = set(stopwords.words('english'))
+
+
+stops.add('I')
+for i in Bug:
+    words = i.split(' ')
+    for j in words:
+        if j not in stops:
+            if (j not in bug_keyword):
+                bug_keyword[j] = 1
+            else:
+                bug_keyword[j]+=1
+
+
+
+
+
+
+print(sorted(bug_keyword.items(), key=lambda t: t[1]))
 

@@ -48,8 +48,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
 print('Size of Training Data ', X_train.shape[0])
 print('Size of Test Data ', X_test.shape[0])
 
-#countv = CountVectorizer(min_df = 3, ngram_range=(1,5), stop_words="english")
-countv = TfidfVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
+countv = CountVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
+#countv = TfidfVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
 
@@ -59,6 +59,9 @@ clf.fit(X_train_tf,Y_train)
 X_test_tf = countv.transform(X_test)
 
 Y_pred = clf.predict(X_test_tf)
+
+""" tree.plot_tree(clf)
+plt.show() """
 
 
 print( accuracy_score (Y_pred,Y_test))

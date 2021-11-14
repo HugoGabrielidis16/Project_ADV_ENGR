@@ -24,3 +24,7 @@ KNN seems that K around 500 is the best
 
 
 Too much 0 in the matrix.
+
+
+
+-> Montrer quels mots representent quel categorie : "Bugs are defined by the following words ...."
