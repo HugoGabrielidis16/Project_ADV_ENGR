@@ -31,21 +31,26 @@ df.columns = ["review","label"]
 
 for i in range(len(df)):
     if df["label"][i] == "Bug":
-        df[i] = 1
+        df["label"][i] = 1
     elif df["label"][i] == "Feature":
-        df[i] = 2
+        df["label"][i] = 2
     elif df["label"][i] == "Rating":
-        df[i] = 3
+        df["label"][i] = 3
     elif df["label"][i] == "UserExperience":
-        df[i] = 4
+        df["label"][i] = 4
+
+
 
 X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
-                                                    df['label'],
+                                                    df['label'].array,
                                                     test_size=0.2,
                                                     stratify=df['label'])
 
 print('Size of Training Data ', X_train.shape[0])
 print('Size of Test Data ', X_test.shape[0])
+
+Y_train = Y_train.astype('int')
+Y_test = Y_test.astype('int')
 
 countv = CountVectorizer(min_df = 10, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)

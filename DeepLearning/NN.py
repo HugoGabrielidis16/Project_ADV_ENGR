@@ -1,22 +1,20 @@
-from sklearn import tree
 
+from sklearn.datasets import make_multilabel_classification
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import plot_confusion_matrix
-from sklearn.svm import LinearSVC
+import tensorflow as tf
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 import json
-
-
 
 with open("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/json/all.json", "r") as read_file:
     data = json.load(read_file)
-
-
 
 Review_label = []
 
@@ -29,6 +27,7 @@ for i in range(len(data)):
 df = pd.DataFrame(Review_label)
 df.columns = ["review","label"]
 
+
 for i in range(len(df)):
     if df["label"][i] == "Bug":
         df["label"][i] = 1
@@ -38,29 +37,35 @@ for i in range(len(df)):
         df["label"][i] = 3
     elif df["label"][i] == "UserExperience":
         df["label"][i] = 4
-        
+
 X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
                                                     df['label'],
-                                                    test_size=0.2,
+                                                    test_size=0.4,
                                                     stratify=df['label'])
 
-print('Size of Training Data ', X_train.shape[0])
-print('Size of Test Data ', X_test.shape[0])
 
-countv = CountVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
-#countv = TfidfVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
+print(X_train)
+
+countv = TfidfVectorizer(min_df = 5, ngram_range=(1,1), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
+X_train_tf = X_train_tf.toarray() 
 
 
-clf = tree.DecisionTreeClassifier()
-clf.fit(X_train_tf,Y_train)
+Y_train = Y_train.astype('int')
+Y_test = Y_test.astype('int')
+
+model = tf.keras.models.Sequential([tf.keras.layers.Flatten(), 
+                                    tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+                                    tf.keras.layers.Dense(64, activation=tf.nn.relu), 
+                                    tf.keras.layers.Dense(32, activation=tf.nn.relu), 
+                                    tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
+
+
+model.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+
+model.fit(X_train_tf, Y_train, epochs=10)
 
 X_test_tf = countv.transform(X_test)
+X_test_tf = X_test_tf.toarray()
 
-Y_pred = clf.predict(X_test_tf)
-
-""" tree.plot_tree(clf)
-plt.show() """
-
-
-print( accuracy_score (Y_pred,Y_test))
+model.evaluate(X_test_tf, Y_test)

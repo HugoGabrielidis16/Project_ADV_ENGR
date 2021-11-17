@@ -15,6 +15,8 @@ import tensorflow as tf
 import prepare_json 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 with open("json/all.json", "r") as read_file:
     data = json.load(read_file)
 
