@@ -16,7 +16,9 @@ dataframe_golden_set_HLT=pd.read_csv("Database/golden_set_HLT.csv",sep =";")
 
 
 
-bug_keywords = ["bug", "fix", "problem", "issue", "defect", "crash","error","issue","problem"]
+bug_keywords = ["bug", "fix", "problem", "issue", "defect", "crash","error","issue","problem","uninstalling"]
+
+
 
 featurerequests_keywods = ["add", "please", "could", "would", "hope", "improve", "miss", "need","prefer",
 "request", "should", "suggest", "want", "wish"]
@@ -30,10 +32,11 @@ def cosine_similarity_dataframe_keywords(data_frame,keywords,label_name):
     for i in range(len(data_frame[label_name].values)):
             data_frame[label_name].values[i] = data_frame[label_name].values[i].lower()
     
-    dt = tfidf.fit_transform(data_frame[label_name].values.astype('U'))
-    made_up = tfidf.transform(keywords)
+    dt = tfidf.fit_transform(keywords)
+    made_up = tfidf.transform(data_frame[label_name].values.astype('U'))
 
-    sim = cosine_similarity(made_up, dt)
+    sim = cosine_similarity(dt, dt)
+    sim = sim[bug_keywords]
     return sim
 
 

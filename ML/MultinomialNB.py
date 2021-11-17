@@ -80,7 +80,7 @@ Y_l = model1.predict(X_l)
 Bug = []
 
 for i in range(len(X_test)):
-    if Y_l[i] =="Bug":
+    if Y_l[i] ==1:
         Bug.append(X_testing.iloc[i])
 
 

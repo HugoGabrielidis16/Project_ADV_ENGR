@@ -43,10 +43,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
                                                     test_size=0.4,
                                                     stratify=df['label'])
 
-
-print(X_train)
-
-countv = TfidfVectorizer(min_df = 5, ngram_range=(1,1), stop_words="english")
+countv = TfidfVectorizer(min_df = 2, ngram_range=(1,8), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 X_train_tf = X_train_tf.toarray() 
 
@@ -55,10 +52,11 @@ Y_train = Y_train.astype('int')
 Y_test = Y_test.astype('int')
 
 model = tf.keras.models.Sequential([tf.keras.layers.Flatten(), 
-                                    tf.keras.layers.Dense(128, activation=tf.nn.relu), 
-                                    tf.keras.layers.Dense(64, activation=tf.nn.relu), 
+                                    #tf.keras.layers.Dense(128, activation=tf.nn.relu), 
+                                    #tf.keras.layers.Dense(64, activation=tf.nn.relu), 
                                     tf.keras.layers.Dense(32, activation=tf.nn.relu), 
-                                    tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
+                                    tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+                                    ])
 
 
 model.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
