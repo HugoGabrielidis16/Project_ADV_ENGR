@@ -52,7 +52,7 @@ print('Size of Test Data ', X_test.shape[0])
 Y_train = Y_train.astype('int')
 Y_test = Y_test.astype('int')
 
-countv = CountVectorizer(min_df = 10, ngram_range=(1,5), stop_words="english")
+countv = CountVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
 model1 = MultinomialNB()
@@ -78,17 +78,31 @@ Y_l = model1.predict(X_l)
 
 
 Bug = []
-
+Feature = []
+Rating = []
+UserExperience = []
 for i in range(len(X_test)):
-    if Y_l[i] ==1:
+    if Y_l[i] == 1:
         Bug.append(X_testing.iloc[i])
+    elif Y_l[i] == 2:
+        Feature.append(X_testing.iloc[i])
+    elif Y_l[i] == 3:
+        Rating.append(X_testing.iloc[i])
+    elif Y_l[i] == 4:
+        UserExperience.append(X_testing.iloc[i])
 
 
 bug_keyword = {}
+feature_keyword = {}
+rating_keyword = {}
+userexperience_keyword = {}
+
 stops = set(stopwords.words('english'))
-
-
 stops.add('I')
+stops.add('')
+stops.add('The')
+stops.add('This')
+
 for i in Bug:
     words = i.split(' ')
     for j in words:
@@ -100,8 +114,54 @@ for i in Bug:
 
 
 
+for i in Feature:
+    words = i.split(' ')
+    for j in words:
+        if j not in stops:
+            if (j not in feature_keyword):
+                feature_keyword[j] = 1
+            else:
+                feature_keyword[j]+=1
+
+for i in Rating:
+    words = i.split(' ')
+    for j in words:
+        if j not in stops:
+            if (j not in rating_keyword):
+                rating_keyword[j] = 1
+            else:
+                rating_keyword[j]+=1
+
+for i in UserExperience:
+    words = i.split(' ')
+    for j in words:
+        if j not in stops:
+            if (j not in userexperience_keyword):
+                userexperience_keyword[j] = 1
+            else:
+                userexperience_keyword[j]+=1
 
 
+Bug = sorted(bug_keyword.items(), key=lambda t: t[1])
+Feature = sorted(feature_keyword.items(), key=lambda t: t[1])
+Rating = sorted(rating_keyword.items(), key=lambda t: t[1])
+UserExperience = sorted(userexperience_keyword.items(), key=lambda t: t[1])
 
-print(sorted(bug_keyword.items(), key=lambda t: t[1]))
+j = 20
+print("Top " + str(j)+ " keywords for Bugs Reviews : ")
+for i in range(1,j+1):
+    print(Bug[len(Bug)-i][0])
+
+print()
+print("Top " + str(j)+ " keywords for Feature Reviews : ")
+for i in range(1,j+1):
+    print(Feature[len(Feature)-i][0])
+print()
+print("Top " + str(j)+ " keywords for Rating Reviews : ")
+for i in range(1,j+1):
+    print(Rating[len(Rating)-i][0])
+print()
+print("Top " + str(j)+ " keywords for UserExperience Reviews : ")
+for i in range(1,j+1):
+    print(UserExperience[len(UserExperience)-i][0])
 
