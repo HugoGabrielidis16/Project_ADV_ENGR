@@ -21,3 +21,10 @@ Milestone 3 :
 
 - Adapting Neural Network layer and number of perceptron in order to find the best accuracy
 - Identifying keywords of each category found using Machine Learning
+- Use of World cloud to show the words
+
+---
+
+How to make it work :
+
+pip install -r requirement.txt
