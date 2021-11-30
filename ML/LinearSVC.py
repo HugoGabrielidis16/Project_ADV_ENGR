@@ -64,6 +64,35 @@ print ('Accuracy Score: - ', accuracy_score(Y_test, Y_pred_LinearSVC))
 plot_confusion_matrix(model1,X_test_tf,
                       Y_test, values_format='d',
                       cmap=plt.cm.Blues)
-plt.title("Confusion matrix for MultinomialNB, mind_df = 5, ngram_range=(1,1)")
+plt.title("Confusion matrix for MultinomialNB, mind_df = 3, ngram_range=(1,5)")
 plt.show()
 
+
+
+x = []
+y = []
+
+for C in range(1,100,5):
+    clf = LinearSVC(C=C)
+    clf.fit(X_train_tf,Y_train)
+
+    X_test_tf = countv.transform(X_test)
+
+    Y_pred = clf.predict(X_test_tf)
+
+    """ tree.plot_tree(clf)
+    plt.show() """
+
+
+
+    x.append(C)
+    y.append(accuracy_score (Y_pred,Y_test))
+
+
+
+plt.xlabel("C")
+plt.ylabel("Accuracy score")
+plt.plot(x,y)
+
+
+plt.show()

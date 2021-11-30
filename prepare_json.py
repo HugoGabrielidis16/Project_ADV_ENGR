@@ -22,7 +22,7 @@ for i in range(len(data)):
     Review_label.append([a,b])
 
 
-
+print(len(data))
 DataFrame_json = pd.DataFrame(Review_label)
 DataFrame_json.columns = ["review","label"]
 
@@ -53,6 +53,7 @@ for i in range(len(DataFrame_json_label_Matrix)):
     """ else:
         DataFrame_json_label_Matrix[i] = 0 """
     
+print(len(DataFrame_json))
 DataFrame_json_label_Matrix_test = DataFrame_json_label_Matrix[0:3670]
 DataFrame_json_review_Matrix_test = DataFrame_json_review_Matrix[0:3670]
 

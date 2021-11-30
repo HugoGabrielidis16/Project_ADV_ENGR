@@ -53,15 +53,16 @@ Y_test = Y_test.astype('int')
 
 
 
-model = tf.keras.models.Sequential([
-                                    tf.keras.layers.Dense(64, activation=tf.nn.relu, input_shape=[X_train_tf.shape[1]]), 
-                                    tf.keras.layers.Dropout(0.3, seed=2),
-                                    #tf.keras.layers.Dense(64, activation=tf.nn.relu), 
-                                    #tf.keras.layers.Dense(64, activation=tf.nn.relu), 
-                                    tf.keras.layers.Dense(4, activation=tf.nn.softmax)
-                                    ])
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.Embedding(input_dim=1000, output_dim=64))
 
+# The output of GRU will be a 3D tensor of shape (batch_size, timesteps, 256)
+model.add(tf.keras.layers.GRU(256, return_sequences=True))
 
+# The output of SimpleRNN will be a 2D tensor of shape (batch_size, 128)
+model.add(tf.keras.layers.SimpleRNN(128))
+
+model.add(tf.keras.layers.Dense(10))
 model.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 
 model.fit(X_train_tf, Y_train, epochs=10)

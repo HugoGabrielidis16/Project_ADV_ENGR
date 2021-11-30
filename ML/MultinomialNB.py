@@ -66,7 +66,7 @@ print ('Accuracy Score MultinomialNB  mind_df = 1, ngram_range=(1,1) : - ', accu
 plot_confusion_matrix(model1,X_test_tf,
                       Y_test, values_format='d',
                       cmap=plt.cm.Blues)
-plt.title("Confusion matrix for MultinomialNB, mind_df = 1, ngram_range=(1,1)")
+plt.title("Confusion matrix for MultinomialNB, mind_df = 1, ngram_range=(1,5)")
 plt.show()
 
 df_t = pd.read_csv("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/Database/reviews.csv",sep =";")
@@ -147,7 +147,7 @@ Feature = sorted(feature_keyword.items(), key=lambda t: t[1])
 Rating = sorted(rating_keyword.items(), key=lambda t: t[1])
 UserExperience = sorted(userexperience_keyword.items(), key=lambda t: t[1])
 
-j = 20
+""" j = 20
 print("Top " + str(j)+ " keywords for Bugs Reviews : ")
 for i in range(1,j+1):
     print(Bug[len(Bug)-i][0])
@@ -163,9 +163,68 @@ for i in range(1,j+1):
 print()
 print("Top " + str(j)+ " keywords for UserExperience Reviews : ")
 for i in range(1,j+1):
-    print(UserExperience[len(UserExperience)-i][0])
+    print(UserExperience[len(UserExperience)-i][0]) """
 
 
 
+from wordcloud import WordCloud
 
 
+def wordcloud_topics(model, features, no_top_words=40):
+    for topic, words in enumerate(model.components_):
+        size = {}
+        largest = words.argsort()[::-1] # invert sort order
+        for i in range(0, no_top_words):
+            size[features[largest[i]]] = abs(words[largest[i]])
+        wc = WordCloud(background_color="white", max_words=100, width=960, height=540)
+        wc.generate_from_frequencies(size)
+        plt.imshow(wc, interpolation='bilinear')
+        plt.axis("off")
+        plt.show()
+
+
+
+wc_bug = WordCloud(background_color="white", max_words=100, width=960, height=540)
+wc_bug.generate_from_frequencies(bug_keyword)
+
+
+
+plt.imshow(wc_bug, interpolation='bilinear')
+plt.axis("off")
+plt.title('Bug keywords')
+plt.show()
+
+
+
+wc_feature = WordCloud(background_color="white", max_words=100, width=960, height=540)
+wc_feature.generate_from_frequencies(feature_keyword)
+
+
+
+plt.imshow(wc_feature, interpolation='bilinear')
+plt.axis("off")
+plt.title('Feature keywords')
+plt.show()
+
+
+wc_rating = WordCloud(background_color="white", max_words=100, width=960, height=540)
+wc_rating.generate_from_frequencies(rating_keyword)
+
+
+
+plt.imshow(wc_rating, interpolation='bilinear')
+plt.axis("off")
+plt.title('Rating keywords')
+plt.show()
+
+
+
+wc_userexperience = WordCloud(background_color="white", max_words=100, width=960, height=540)
+wc_userexperience.generate_from_frequencies(userexperience_keyword)
+
+
+
+plt.imshow(wc_userexperience, interpolation='bilinear')
+plt.axis("off")
+plt.title('User Experience keywords')
+plt.show()

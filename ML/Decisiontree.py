@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.svm import LinearSVC
 import json
-
+import matplotlib.pyplot as plt
 
 
 with open("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/json/all.json", "r") as read_file:
@@ -52,15 +52,44 @@ countv = CountVectorizer(min_df = 1, ngram_range=(1,5), stop_words="english")
 X_train_tf = countv.fit_transform(X_train)
 
 
-clf = tree.DecisionTreeClassifier()
-clf.fit(X_train_tf,Y_train)
+Y_train = Y_train.astype('int')
+Y_test = Y_test.astype('int')
+
 
 X_test_tf = countv.transform(X_test)
 
-Y_pred = clf.predict(X_test_tf)
+
 
 """ tree.plot_tree(clf)
 plt.show() """
 
 
-print( accuracy_score (Y_pred,Y_test))
+
+x = []
+y = []
+
+for max_depth in range(1,20):
+    clf = tree.DecisionTreeClassifier(max_depth=max_depth)
+    clf.fit(X_train_tf,Y_train)
+
+    X_test_tf = countv.transform(X_test)
+
+    Y_pred = clf.predict(X_test_tf)
+
+    """ tree.plot_tree(clf)
+    plt.show() """
+
+
+    print( accuracy_score (Y_pred,Y_test))
+
+    x.append(max_depth)
+    y.append(accuracy_score (Y_pred,Y_test))
+
+
+
+plt.xlabel("Max Depth")
+plt.ylabel("Accuracy score")
+plt.plot(x,y)
+
+
+plt.show()
