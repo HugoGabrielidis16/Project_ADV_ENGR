@@ -42,6 +42,7 @@ for i in DataFrame_json["review"]:
                     if j in rating_keywords:
                         UserExperience +=1
     if Bug > 0 or Feature > 0 or Rating > 0 or UserExperience > 0:
+        print(max(Bug,Feature,Rating,UserExperience))
         if max(Bug,Feature,Rating,UserExperience) == Bug:
             y.append("Bug")
         elif max(Bug,Feature,Rating,UserExperience) == Feature:
