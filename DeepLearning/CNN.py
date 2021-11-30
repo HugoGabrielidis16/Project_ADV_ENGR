@@ -13,6 +13,45 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 import json
 
+
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import RandomizedSearchCV
+
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+
+def plot_history(history):
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    x = range(1, len(acc) + 1)
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(x, acc, 'b', label='Training acc')
+    plt.plot(x, val_acc, 'r', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.plot(x, loss, 'b', label='Training loss')
+    plt.plot(x, val_loss, 'r', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+
 with open("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/json/all.json", "r") as read_file:
     data = json.load(read_file)
 
@@ -38,191 +77,80 @@ for i in range(len(df)):
     elif df["label"][i] == "UserExperience":
         df["label"][i] = 3
 
-X_train, X_test, Y_train, Y_test = train_test_split(df['review'],
-                                                    df['label'],
-                                                    test_size=0.2,
-                                                    stratify=df['label'])
+sentences = df['review'].values
 
-countv = TfidfVectorizer(min_df = 2, ngram_range=(1,1), stop_words="english")
-X_train_tf = countv.fit_transform(X_train)
-X_train_tf = X_train_tf.toarray() 
+sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, df["label"], test_size=0.25, random_state=1000)
 
+tokenizer = Tokenizer(num_words=5000)
+tokenizer.fit_on_texts(sentences_train)
 
-Y_train = Y_train.astype('int')
-Y_test = Y_test.astype('int')
+maxlen = 100
 
+X_train = tokenizer.texts_to_sequences(sentences_train)
+X_test = tokenizer.texts_to_sequences(sentences_test)
 
+X_train = pad_sequences(X_train, padding='post', maxlen=maxlen)
+X_test = pad_sequences(X_test, padding='post', maxlen=maxlen)
 
-model = tf.keras.Sequential()
-model.add(tf.keras.layers.Embedding(input_dim=1000, output_dim=64))
+y_train = np.asarray(y_train).astype('int')
+y_test = np.asarray(y_test).astype('int')  
 
-# The output of GRU will be a 3D tensor of shape (batch_size, timesteps, 256)
-model.add(tf.keras.layers.GRU(256, return_sequences=True))
+Y_train = []
+for i in range(len(y_train)):
+    if y_train[i] == 1:
+        Y_train.append([1,0,0,0])
+    elif y_train[i] == 2:
+        Y_train.append([0,1,0,0])
+    elif y_train[i] == 3:
+        Y_train.append([0,0,1,0])
+    else :
+         Y_train.append([0,0,0,1])
 
-# The output of SimpleRNN will be a 2D tensor of shape (batch_size, 128)
-model.add(tf.keras.layers.SimpleRNN(128))
+Y_test = []
+for i in range(len(y_test)):
+    if y_test[i] == 1:
+        Y_test.append([1,0,0,0])
+    elif y_test[i] == 2:
+        Y_test.append([0,1,0,0])
+    elif y_test[i] == 3:
+        Y_test.append([0,0,1,0])
+    else :
+         Y_test.append([0,0,0,1])
 
-model.add(tf.keras.layers.Dense(10))
-model.compile(loss='sparse_categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+Y_train = np.asarray(Y_train).astype('int')
+Y_test = np.asarray(Y_test).astype('int') 
+print(Y_train)
 
-model.fit(X_train_tf, Y_train, epochs=10)
-
-X_test_tf = countv.transform(X_test)
-X_test_tf = X_test_tf.toarray()
-
-model.evaluate(X_test_tf, Y_test)
-
-
-
-
-
-df_t = pd.read_csv("/Users/hugo/Cincinnati/ADV_ENGR/my_env/Project_ADV_ENGR/Database/reviews.csv",sep =";")
-X_testing = df["review"]
-
-X_l =  countv.transform(X_testing)
-X_l = X_l.toarray()
-
-Y_l = model.predict(X_l)
-
-Y_l = Y_l.tolist()
-for i in range(len(Y_l)):
-    w = max(Y_l[i])
-    Y_l[i] = Y_l[i].index(w)+1
+vocab_size = len(tokenizer.word_index) + 1  # Adding 1 because of reserved 0 index
 
 
 
-Bug = []
-Feature = []
-Rating = []
-UserExperience = []
-for i in range(len(X_test)):
-    if Y_l[i] == 1:
-        Bug.append(X_testing.iloc[i])
-    elif Y_l[i] == 2:
-        Feature.append(X_testing.iloc[i])
-    elif Y_l[i] == 3:
-        Rating.append(X_testing.iloc[i])
-    elif Y_l[i] == 4:
-        UserExperience.append(X_testing.iloc[i])
 
 
-bug_keyword = {}
-feature_keyword = {}
-rating_keyword = {}
-userexperience_keyword = {}
+embedding_dim = 100
+model = Sequential()
+model.add(layers.Embedding(vocab_size, embedding_dim, input_length=maxlen))
+model.add(layers.Conv1D(128, 5, activation='relu'))
+model.add(layers.GlobalMaxPooling1D())
+model.add(layers.Dense(10, activation='relu'))
+model.add(layers.Dense(4, activation='sigmoid'))
+model.compile(optimizer='adam',
+               loss='binary_crossentropy',
+               metrics=['acc'])
+model.summary() 
+
+history = model.fit(X_train, Y_train,
+                    epochs=20,
+                    verbose=True,
+                    validation_data=(X_test, Y_test),
+                    batch_size=10)
 
 
-import nltk
-from nltk.corpus import stopwords
+print(model.predict(X_test))
 
-stops = set(stopwords.words('english'))
-stops.add('I')
-stops.add('')
-stops.add('The')
-stops.add('This')
-
-for i in Bug:
-    words = i.split(' ')
-    for j in words:
-        if j not in stops:
-            if (j not in bug_keyword):
-                bug_keyword[j] = 1
-            else:
-                bug_keyword[j]+=1
-
-
-
-for i in Feature:
-    words = i.split(' ')
-    for j in words:
-        if j not in stops:
-            if (j not in feature_keyword):
-                feature_keyword[j] = 1
-            else:
-                feature_keyword[j]+=1
-
-for i in Rating:
-    words = i.split(' ')
-    for j in words:
-        if j not in stops:
-            if (j not in rating_keyword):
-                rating_keyword[j] = 1
-            else:
-                rating_keyword[j]+=1
-
-for i in UserExperience:
-    words = i.split(' ')
-    for j in words:
-        if j not in stops:
-            if (j not in userexperience_keyword):
-                userexperience_keyword[j] = 1
-            else:
-                userexperience_keyword[j]+=1
-
-
-Bug = sorted(bug_keyword.items(), key=lambda t: t[1])
-Feature = sorted(feature_keyword.items(), key=lambda t: t[1])
-Rating = sorted(rating_keyword.items(), key=lambda t: t[1])
-UserExperience = sorted(userexperience_keyword.items(), key=lambda t: t[1])
-
-from wordcloud import WordCloud
-
-
-def wordcloud_topics(model, features, no_top_words=40):
-    for topic, words in enumerate(model.components_):
-        size = {}
-        largest = words.argsort()[::-1] # invert sort order
-        for i in range(0, no_top_words):
-            size[features[largest[i]]] = abs(words[largest[i]])
-        wc = WordCloud(background_color="white", max_words=100, width=960, height=540)
-        wc.generate_from_frequencies(size)
-        plt.imshow(wc, interpolation='bilinear')
-        plt.axis("off")
-        plt.show()
-
-
-
-wc_bug = WordCloud(background_color="white", max_words=100, width=960, height=540)
-wc_bug.generate_from_frequencies(bug_keyword)
-
-
-
-plt.imshow(wc_bug, interpolation='bilinear')
-plt.axis("off")
-plt.title('Bug keywords')
-plt.show()
-
-
-
-wc_feature = WordCloud(background_color="white", max_words=100, width=960, height=540)
-wc_feature.generate_from_frequencies(feature_keyword)
-
-
-
-plt.imshow(wc_feature, interpolation='bilinear')
-plt.axis("off")
-plt.title('Feature keywords')
-plt.show()
-
-
-wc_rating = WordCloud(background_color="white", max_words=100, width=960, height=540)
-wc_rating.generate_from_frequencies(rating_keyword)
-
-
-
-plt.imshow(wc_rating, interpolation='bilinear')
-plt.axis("off")
-plt.title('Rating keywords')
-plt.show()
-
-
-
-wc_userexperience = WordCloud(background_color="white", max_words=100, width=960, height=540)
-wc_userexperience.generate_from_frequencies(userexperience_keyword)
-
-
-
-plt.imshow(wc_userexperience, interpolation='bilinear')
-plt.axis("off")
-plt.title('User Experience keywords')
+loss, accuracy = model.evaluate(X_train, Y_train, verbose=False)
+print("Training Accuracy: {:.4f}".format(accuracy))
+loss, accuracy = model.evaluate(X_test, Y_test, verbose=False)
+print("Testing Accuracy:  {:.4f}".format(accuracy))
+plot_history(history)
 plt.show()
