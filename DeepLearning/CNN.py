@@ -131,19 +131,24 @@ embedding_dim = 100
 model = Sequential()
 model.add(layers.Embedding(vocab_size, embedding_dim, input_length=maxlen))
 model.add(layers.Conv1D(128, 5, activation='relu'))
-model.add(layers.GlobalMaxPooling1D())
-model.add(layers.Dense(10, activation='relu'))
+model.add(layers.MaxPooling1D())
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(4, activation='sigmoid'))
 model.compile(optimizer='adam',
                loss='binary_crossentropy',
                metrics=['acc'])
 model.summary() 
 
+checkpointer = tf.keras.callbacks.ModelCheckpoint('NN.h5',verbose=1,save_best_only = True)
+
+
 history = model.fit(X_train, Y_train,
                     epochs=20,
                     verbose=True,
                     validation_data=(X_test, Y_test),
-                    batch_size=10)
+                    batch_size=10,callbacks =checkpointer )
 
 
 print(model.predict(X_test))

@@ -79,7 +79,7 @@ for i in range(len(df)):
 
 sentences = df['review'].values
 
-sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, df["label"], test_size=0.25, random_state=1000)
+sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, df["label"], test_size=0.10)
 
 tokenizer = Tokenizer(num_words=5000)
 tokenizer.fit_on_texts(sentences_train)
@@ -135,9 +135,12 @@ model.add(layers.Embedding(input_dim=vocab_size,
                            input_length=maxlen))
 
 model.add(layers.Flatten())
-model.add(layers.Dense(60, activation='relu'))
-model.add(layers.Dense(60, activation='relu'))
-model.add(layers.Dense(4, activation='sigmoid'))
+model.add(layers.Dense(32, activation='relu'))
+model.add(layers.Dense(64, activation='tanh'))
+model.add(layers.Dropout(0.2))
+model.add(layers.Dense(128, activation='sigmoid'))
+model.add(layers.Dropout(0.3))
+model.add(layers.Dense(4,activation='sigmoid'))
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['acc'])
@@ -145,11 +148,14 @@ model.compile(optimizer='adam',
 model.summary()
 
 
+checkpointer = tf.keras.callbacks.ModelCheckpoint('NN.h5',verbose=1,save_best_only = True)
+
+
 history = model.fit(X_train, Y_train,
-                    epochs=20,
+                    epochs=25,
                     verbose=True,
                     validation_data=(X_test, Y_test),
-                    batch_size=10)
+                    batch_size=20,callbacks =checkpointer )
 
 
 print(model.predict(X_test))
