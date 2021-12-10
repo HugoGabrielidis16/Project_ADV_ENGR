@@ -141,7 +141,7 @@ model.compile(optimizer='adam',
                metrics=['acc'])
 model.summary() 
 
-checkpointer = tf.keras.callbacks.ModelCheckpoint('NN.h5',verbose=1,save_best_only = True)
+checkpointer = tf.keras.callbacks.ModelCheckpoint('CNN.h5',verbose=1,save_best_only = True)
 
 
 history = model.fit(X_train, Y_train,
